@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Línea de Tiempo por Pilar — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#182B4D;
+    --cyan-text:#8FC7E8;
+    --teal:#0E9D89;
+    --blue:#1D6FA5;
+    --purple:#6C3FA0;
+    --red:#B23A2E;
+    --orange:#E08A1B;
+    --row-alt:#EAF1F8;
+    --border:#FFFFFF;
+    --header-cell:#DCE6F0;
+    --june-cell:#DCE6F0;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    font-family:'IBM Plex Sans', sans-serif;
+    background:#fff;
+    padding:24px;
+  }
+  table{
+    border-collapse:collapse;
+    width:100%;
+    max-width:1160px;
+    margin:0 auto;
+    table-layout:fixed;
+  }
+  th,td{
+    border:2px solid var(--border);
+    padding:0;
+    font-size:14px;
+  }
+  col.pillar-col{ width:120px; }
+  col.task-col{ width:210px; }
+
+  /* ===== Encabezado principal ===== */
+  .title-cell{
+    background:var(--navy);
+    color:#fff;
+    font-size:22px;
+    font-weight:700;
+    padding:18px 20px;
+  }
+  .range-cell{
+    background:var(--navy);
+    color:var(--cyan-text);
+    text-align:right;
+    font-size:15px;
+    font-weight:500;
+    padding:18px 20px;
+  }
+
+  /* ===== Fila de meses ===== */
+  .month-head{
+    background:var(--header-cell);
+    color:#2B3A55;
+    font-weight:600;
+    text-align:center;
+    padding:12px 6px;
+    font-size:15px;
+  }
+  .month-head.current{
+    background:var(--june-cell);
+    border-bottom:3px solid #E24A3C;
+    color:#2B3A55;
+  }
+  .corner-cell{ background:#fff; }
+
+  /* ===== Columna de pilar ===== */
+  .pillar-cell{
+    color:#fff;
+    font-weight:700;
+    text-align:center;
+    vertical-align:middle;
+    font-size:15px;
+    padding:8px;
+  }
+  .pillar-cell.mantenciones{ background:var(--teal); }
+  .pillar-cell.experiencia{ background:var(--blue); }
+  .pillar-cell.revision{ background:var(--purple); }
+  .pillar-cell.riesgos{ background:var(--red); }
+  .pillar-cell.otros{ background:var(--orange); }
+
+  /* ===== Columna de tarea ===== */
+  .task-cell{
+    padding:10px 14px;
+    color:#1E2A3E;
+    font-size:14px;
+    background:#fff;
+  }
+  tr.alt .task-cell{ background:var(--row-alt); }
+  tr.alt td.empty{ background:var(--row-alt); }
+
+  /* ===== Celdas vacías del gantt ===== */
+  td.empty{ background:#fff; }
+
+  /* ===== Barras coloreadas ===== */
+  td.bar{
+    color:#fff;
+    font-weight:500;
+    padding:10px 14px;
+    font-size:14px;
+    text-align:left;
+    white-space:nowrap;
+    position:relative;
+  }
+  td.bar.mantenciones{ background:var(--teal); }
+  td.bar.experiencia{ background:var(--blue); }
+  td.bar.revision{ background:var(--purple); }
+  td.bar.riesgos{ background:var(--red); }
+  td.bar.otros{ background:var(--orange); }
+
+  /* ===== Columna Estado ===== */
+  col.status-col{ width:90px; }
+  .status-head{
+    background:var(--navy);
+    color:#fff;
+    text-align:center;
+    font-weight:600;
+    font-size:13px;
+    padding:12px 4px;
+  }
+  td.status{
+    text-align:center;
+    vertical-align:middle;
+    padding:6px;
+  }
+  tr.alt td.status{ background:var(--row-alt); }
+
+  .check-toggle{
+    width:26px;
+    height:26px;
+    border-radius:50%;
+    border:2px solid #B9C3D2;
+    background:#fff;
+    margin:0 auto;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+  }
+  .check-toggle:hover{ transform:scale(1.08); border-color:#5C9A5C; }
+  .check-toggle svg{
+    width:15px;
+    height:15px;
+    opacity:0;
+    transition:opacity 0.12s ease;
+  }
+  .check-toggle.done{
+    background:#2E9E52;
+    border-color:#2E9E52;
+  }
+  .check-toggle.done svg{ opacity:1; }
+
+  tr.row-done .task-cell{
+    color:#8A93A3;
+    text-decoration:line-through;
+  }
+  tr.row-done td.bar{ opacity:0.45; }
+
+  .legend{
+    max-width:1160px;
+    margin:14px auto 0;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:13px;
+    color:#5B6478;
+  }
+  .legend .check-toggle{ pointer-events:none; }
+</style>
+</head>
+<body>
+
+<table>
+  <colgroup>
+    <col class="pillar-col">
+    <col class="task-col">
+    <col><col><col><col><col><col><col>
+    <col class="status-col">
+  </colgroup>
+
+  <thead>
+    <tr>
+      <th class="title-cell" colspan="2">Línea de Tiempo por Pilar</th>
+      <th class="range-cell" colspan="8">Junio – Diciembre 2026</th>
+    </tr>
+    <tr>
+      <th class="corner-cell"></th>
+      <th class="corner-cell"></th>
+      <th class="month-head current">Junio</th>
+      <th class="month-head">Julio</th>
+      <th class="month-head">Agosto</th>
+      <th class="month-head">Sept.</th>
+      <th class="month-head">Oct.</th>
+      <th class="month-head">Nov.</th>
+      <th class="month-head">Dic.</th>
+      <th class="status-head">Estado</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <!-- MANTENCIONES -->
+    <tr data-task="base-datos">
+      <td class="pillar-cell mantenciones" rowspan="3">Mantenciones</td>
+      <td class="task-cell">Base de datos</td>
+      <td class="bar mantenciones">Base de datos</td>
+      <td class="empty" colspan="6"></td>
+      <td class="status"></td>
+    </tr>
+    <tr class="alt" data-task="formato-preinforme">
+      <td class="task-cell">Formato preinforme PT</td>
+      <td class="empty" colspan="3"></td>
+      <td class="bar mantenciones">Formato preinforme PT</td>
+      <td class="empty" colspan="2"></td>
+      <td class="status"></td>
+    </tr>
+    <tr data-task="rendicion-online">
+      <td class="task-cell">Sistema Rendición Online</td>
+      <td class="bar mantenciones" colspan="2">Sistema Rendición Online</td>
+      <td class="empty" colspan="5"></td>
+      <td class="status"></td>
+    </tr>
+
+    <!-- EXPERIENCIA USUARIO -->
+    <tr class="alt" data-task="manuales-contabilidad">
+      <td class="pillar-cell experiencia" rowspan="3">Experiencia Usuario</td>
+      <td class="task-cell">Manuales contabilidad</td>
+      <td class="empty" colspan="2"></td>
+      <td class="bar experiencia">Manuales contabilidad</td>
+      <td class="empty" colspan="4"></td>
+      <td class="status"></td>
+    </tr>
+    <tr data-task="capsulas-contables">
+      <td class="task-cell">Cápsulas contables</td>
+      <td class="empty" colspan="3"></td>
+      <td class="bar experiencia" colspan="2">Cápsulas contables</td>
+      <td class="empty" colspan="2"></td>
+      <td class="status"></td>
+    </tr>
+    <tr class="alt" data-task="malla-curricular">
+      <td class="task-cell">Malla curricular Servel AE</td>
+      <td class="empty" colspan="2"></td>
+      <td class="bar experiencia" colspan="3">Malla curricular Servel AE</td>
+      <td class="empty" colspan="2"></td>
+      <td class="status"></td>
+    </tr>
+
+    <!-- REVISIÓN CUENTAS -->
+    <tr data-task="catalogo-hallazgos">
+      <td class="pillar-cell revision" rowspan="5">Revisión Cuentas</td>
+      <td class="task-cell">Catálogo de hallazgos</td>
+      <td class="bar revision">Catálogo de hallazgos</td>
+      <td class="empty" colspan="6"></td>
+      <td class="status"></td>
+    </tr>
+    <tr class="alt" data-task="criterios-reembolso">
+      <td class="task-cell">Criterios reembolso</td>
+      <td class="empty"></td>
+      <td class="bar revision">Criterios reembolso</td>
+      <td class="empty" colspan="5"></td>
+      <td class="status"></td>
+    </tr>
+    <tr data-task="plan-auditoria">
+      <td class="task-cell">Plan de Auditoría</td>
+      <td class="empty" colspan="2"></td>
+      <td class="bar revision" colspan="2">Plan de Auditoría</td>
+      <td class="empty" colspan="3"></td>
+      <td class="status"></td>
+    </tr>
+    <tr class="alt" data-task="materialidad">
+      <td class="task-cell">Materialidad</td>
+      <td class="empty" colspan="3"></td>
+      <td class="bar revision">Materialidad</td>
+      <td class="empty" colspan="3"></td>
+      <td class="status"></td>
+    </tr>
+    <tr data-task="nuevos-convenios">
+      <td class="task-cell">Nuevos convenios</td>
+      <td class="empty" colspan="3"></td>
+      <td class="bar revision">Nuevos convenios</td>
+      <td class="empty" colspan="3"></td>
+      <td class="status"></td>
+    </tr>
+
+    <!-- MATRIZ RIESGOS -->
+    <tr class="alt" data-task="monitoreo-automatico">
+      <td class="pillar-cell riesgos" rowspan="2">Matriz Riesgos</td>
+      <td class="task-cell">Monitoreo Automatico</td>
+      <td class="empty"></td>
+      <td class="bar riesgos" colspan="2">Monitoreo Automatico</td>
+      <td class="empty" colspan="4"></td>
+      <td class="status"></td>
+    </tr>
+    <tr data-task="analisis-riesgos">
+      <td class="task-cell">Analisis de riesgos</td>
+      <td class="empty"></td>
+      <td class="bar riesgos">Analisis de riesgos</td>
+      <td class="empty" colspan="5"></td>
+      <td class="status"></td>
+    </tr>
+
+    <!-- OTROS -->
+    <tr class="alt" data-task="generacion-informes">
+      <td class="pillar-cell otros">Otros</td>
+      <td class="task-cell">Generación de informes</td>
+      <td class="bar otros" colspan="7">Generación de informes</td>
+      <td class="status"></td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="legend">
+  <div class="check-toggle done"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 13 10 18 19 7"></polyline></svg></div>
+  <span>Haz clic en el círculo de cada fila para marcarla como realizada y ejecutada con éxito. El estado se guarda automáticamente en este navegador.</span>
+</div>
+
+<script>
+  const STORAGE_KEY = "gantt-status-v1";
+  const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+
+  function checkIcon() {
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("viewBox", "0 0 24 24");
+    svg.setAttribute("fill", "none");
+    svg.setAttribute("stroke", "#fff");
+    svg.setAttribute("stroke-width", "3");
+    svg.setAttribute("stroke-linecap", "round");
+    svg.setAttribute("stroke-linejoin", "round");
+    const poly = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+    poly.setAttribute("points", "5 13 10 18 19 7");
+    svg.appendChild(poly);
+    return svg;
+  }
+
+  document.querySelectorAll("tr[data-task]").forEach(row => {
+    const taskId = row.dataset.task;
+    const statusCell = row.querySelector("td.status");
+
+    const toggle = document.createElement("div");
+    toggle.className = "check-toggle";
+    toggle.setAttribute("role", "button");
+    toggle.setAttribute("tabindex", "0");
+    toggle.setAttribute("aria-label", "Marcar tarea como realizada");
+    toggle.appendChild(checkIcon());
+    statusCell.appendChild(toggle);
+
+    function applyState(done) {
+      toggle.classList.toggle("done", done);
+      row.classList.toggle("row-done", done);
+    }
+
+    applyState(!!saved[taskId]);
+
+    function toggleState() {
+      const next = !toggle.classList.contains("done");
+      applyState(next);
+      saved[taskId] = next;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
+    }
+
+    toggle.addEventListener("click", toggleState);
+    toggle.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        toggleState();
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
