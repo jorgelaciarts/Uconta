@@ -23,11 +23,11 @@ const LAST_UPDATED = "19 de agosto de 2026";
 const RECORDS = [
   // --- Mantenciones ---
   { exp: "EXP-2026-001", pillar: "mantenciones", title: "Base de datos", period: "Junio – Agosto" },
-  { exp: "EXP-2026-002", pillar: "mantenciones", title: "Formato preinforme PT", period: "Septiembre" },
+  { exp: "EXP-2026-002", pillar: "mantenciones", title: "Formato preinforme PT", period: "Septiembre – Octubre" },
   { exp: "EXP-2026-003", pillar: "mantenciones", title: "Sistema Rendición Online", period: "Junio – Julio" },
 
   // --- Experiencia Usuario ---
-  { exp: "EXP-2026-004", pillar: "experiencia", title: "Manuales contabilidad", period: "Agosto" },
+  { exp: "EXP-2026-004", pillar: "experiencia", title: "Manuales contabilidad", period: "Agosto – Diciembre" },
   { exp: "EXP-2026-005", pillar: "experiencia", title: "Cápsulas contables", period: "Septiembre – Octubre" },
   { exp: "EXP-2026-006", pillar: "experiencia", title: "Malla curricular Servel AE", period: "Agosto – Octubre" },
 
