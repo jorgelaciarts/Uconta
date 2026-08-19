@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Índice General — Línea de Tiempo por Pilar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F5F1E8;
+    --paper-2:#EFEADC;
+    --ink:#16213D;
+    --ink-soft:#5B6478;
+    --line:#DAD3C1;
+    --teal:#0E8C7F;      --teal-tint:#DFF0EC;
+    --blue:#2B65A6;      --blue-tint:#E2EBF6;
+    --purple:#6A3FA0;    --purple-tint:#ECE4F5;
+    --red:#B23A3A;       --red-tint:#F5E1DF;
+    --orange:#C97A1A;    --orange-tint:#F6EADA;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Sans', sans-serif;
+    line-height:1.5;
+    min-height:100vh;
+  }
+
+  /* ===== MASTHEAD ===== */
+  header.masthead{
+    background:var(--ink);
+    color:var(--paper);
+    padding:2.5rem 2rem 2rem;
+    border-bottom:6px solid var(--orange);
+  }
+  .masthead-inner{
+    max-width:1180px;
+    margin:0 auto;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    flex-wrap:wrap;
+    gap:1rem;
+  }
+  .masthead-eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.75rem;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:#B8C0D9;
+    margin-bottom:0.5rem;
+  }
+  header.masthead h1{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:2.4rem;
+    letter-spacing:-0.01em;
+  }
+  .masthead-meta{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.8rem;
+    color:#B8C0D9;
+    text-align:right;
+  }
+  .masthead-meta span{display:block;}
+
+  /* ===== LAYOUT ===== */
+  .layout{
+    max-width:1180px;
+    margin:0 auto;
+    display:grid;
+    grid-template-columns:220px 1fr;
+    gap:0;
+    align-items:start;
+  }
+
+  /* ===== FOLDER TABS (signature element) ===== */
+  nav.tabs{
+    position:sticky;
+    top:0;
+    padding:2rem 0 2rem 0;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .tab{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:0.65rem 0.9rem 0.65rem 1.1rem;
+    border-radius:0 8px 8px 0;
+    cursor:pointer;
+    font-size:0.88rem;
+    font-weight:500;
+    color:var(--ink-soft);
+    background:transparent;
+    border-left:4px solid transparent;
+    transition:transform 0.15s ease, background 0.15s ease;
+  }
+  .tab:hover{ transform:translateX(3px); }
+  .tab .dot{
+    width:9px; height:9px; border-radius:50%;
+    background:currentColor;
+    flex-shrink:0;
+  }
+  .tab .count{
+    margin-left:auto;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.72rem;
+    color:var(--ink-soft);
+    opacity:0.7;
+  }
+  .tab[data-pillar="todos"]{ color:var(--ink); }
+  .tab[data-pillar="mantenciones"]{ color:var(--teal); }
+  .tab[data-pillar="experiencia"]{ color:var(--blue); }
+  .tab[data-pillar="revision"]{ color:var(--purple); }
+  .tab[data-pillar="riesgos"]{ color:var(--red); }
+  .tab[data-pillar="otros"]{ color:var(--orange); }
+
+  .tab.active{
+    background:var(--paper-2);
+    border-left-color:currentColor;
+    font-weight:600;
+  }
+
+  /* ===== MAIN ===== */
+  main{
+    padding:2rem 2rem 4rem 1.5rem;
+    border-left:1px solid var(--line);
+    min-height:70vh;
+  }
+
+  .toolbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:1rem;
+    margin-bottom:1.75rem;
+    flex-wrap:wrap;
+  }
+  .search{
+    flex:1;
+    min-width:220px;
+    padding:0.6rem 0.9rem;
+    border:1px solid var(--line);
+    border-radius:6px;
+    background:#fff;
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size:0.88rem;
+    color:var(--ink);
+  }
+  .search:focus{ outline:2px solid var(--ink); outline-offset:1px; }
+  .result-count{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.75rem;
+    color:var(--ink-soft);
+    white-space:nowrap;
+  }
+
+  .pillar-group{ margin-bottom:2.2rem; }
+  .pillar-group-title{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:1.15rem;
+    margin-bottom:0.7rem;
+    padding-bottom:0.4rem;
+    border-bottom:1px solid var(--line);
+  }
+
+  .record{
+    display:grid;
+    grid-template-columns:90px 1fr auto;
+    gap:1rem;
+    align-items:center;
+    padding:0.85rem 1rem;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:8px;
+    margin-bottom:8px;
+  }
+  .record .exp{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.72rem;
+    color:var(--ink-soft);
+  }
+  .record .title{
+    font-weight:500;
+    font-size:0.95rem;
+  }
+  .record .desc{
+    font-size:0.82rem;
+    color:var(--ink-soft);
+    margin-top:2px;
+  }
+  .record .period{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.72rem;
+    padding:4px 10px;
+    border-radius:20px;
+    white-space:nowrap;
+  }
+
+  .record.mantenciones .period{ background:var(--teal-tint); color:var(--teal); }
+  .record.experiencia .period{ background:var(--blue-tint); color:var(--blue); }
+  .record.revision .period{ background:var(--purple-tint); color:var(--purple); }
+  .record.riesgos .period{ background:var(--red-tint); color:var(--red); }
+  .record.otros .period{ background:var(--orange-tint); color:var(--orange); }
+
+  .empty{
+    padding:3rem 1rem;
+    text-align:center;
+    color:var(--ink-soft);
+    font-size:0.9rem;
+  }
+
+  footer{
+    max-width:1180px;
+    margin:0 auto;
+    padding:1.5rem 2rem 2.5rem;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.72rem;
+    color:var(--ink-soft);
+    border-top:1px solid var(--line);
+  }
+
+  @media (max-width:760px){
+    .layout{ grid-template-columns:1fr; }
+    nav.tabs{
+      position:static;
+      flex-direction:row;
+      overflow-x:auto;
+      padding:1rem;
+      border-bottom:1px solid var(--line);
+    }
+    .tab{ border-radius:8px; border-left:none; white-space:nowrap; }
+    .tab.active{ border-left:none; box-shadow:inset 0 -3px 0 currentColor; }
+    main{ border-left:none; padding:1.5rem 1rem 3rem; }
+    .record{ grid-template-columns:1fr; gap:0.4rem; }
+  }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <div>
+      <div class="masthead-eyebrow">Índice general · actualización continua</div>
+      <h1>Línea de Tiempo por Pilar</h1>
+    </div>
+    <div class="masthead-meta">
+      <span>Periodo Junio – Diciembre 2026</span>
+      <span id="last-updated">Última actualización: —</span>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="tabs" id="tabs"></nav>
+  <main>
+    <div class="toolbar">
+      <input type="text" class="search" id="search" placeholder="Buscar por nombre de iniciativa…">
+      <span class="result-count" id="result-count"></span>
+    </div>
+    <div id="content"></div>
+  </main>
+</div>
+
+<footer>
+  Este índice se actualiza agregando entradas al archivo <code>data.js</code>. Ver <code>README.md</code> para instrucciones.
+</footer>
+
+<script src="data.js"></script>
+<script>
+  const PILLARS = [
+    { id: "todos",         label: "Todos" },
+    { id: "mantenciones",  label: "Mantenciones" },
+    { id: "experiencia",   label: "Experiencia Usuario" },
+    { id: "revision",      label: "Revisión Cuentas" },
+    { id: "riesgos",       label: "Matriz Riesgos" },
+    { id: "otros",         label: "Otros" },
+  ];
+
+  let activePillar = "todos";
+  let query = "";
+
+  function counts() {
+    const c = { todos: RECORDS.length };
+    PILLARS.forEach(p => {
+      if (p.id === "todos") return;
+      c[p.id] = RECORDS.filter(r => r.pillar === p.id).length;
+    });
+    return c;
+  }
+
+  function renderTabs() {
+    const c = counts();
+    const tabsEl = document.getElementById("tabs");
+    tabsEl.innerHTML = PILLARS.map(p => `
+      <div class="tab ${p.id === activePillar ? "active" : ""}" data-pillar="${p.id}">
+        <span class="dot"></span>
+        <span>${p.label}</span>
+        <span class="count">${c[p.id] || 0}</span>
+      </div>
+    `).join("");
+
+    tabsEl.querySelectorAll(".tab").forEach(el => {
+      el.addEventListener("click", () => {
+        activePillar = el.dataset.pillar;
+        renderTabs();
+        renderContent();
+      });
+    });
+  }
+
+  function filteredRecords() {
+    return RECORDS.filter(r => {
+      const matchesPillar = activePillar === "todos" || r.pillar === activePillar;
+      const matchesQuery = r.title.toLowerCase().includes(query.toLowerCase());
+      return matchesPillar && matchesQuery;
+    });
+  }
+
+  function renderContent() {
+    const records = filteredRecords();
+    document.getElementById("result-count").textContent =
+      records.length === 1 ? "1 resultado" : `${records.length} resultados`;
+
+    const contentEl = document.getElementById("content");
+
+    if (records.length === 0) {
+      contentEl.innerHTML = `<div class="empty">No se encontraron entradas. Ajusta la búsqueda o el filtro.</div>`;
+      return;
+    }
+
+    if (activePillar !== "todos") {
+      contentEl.innerHTML = records.map(recordHtml).join("");
+      return;
+    }
+
+    // Agrupado por pilar cuando se ven todos
+    const groups = {};
+    records.forEach(r => {
+      groups[r.pillar] = groups[r.pillar] || [];
+      groups[r.pillar].push(r);
+    });
+
+    contentEl.innerHTML = PILLARS.filter(p => p.id !== "todos" && groups[p.id]).map(p => `
+      <div class="pillar-group">
+        <div class="pillar-group-title">${p.label}</div>
+        ${groups[p.id].map(recordHtml).join("")}
+      </div>
+    `).join("");
+  }
+
+  function recordHtml(r) {
+    return `
+      <div class="record ${r.pillar}">
+        <div class="exp">${r.exp}</div>
+        <div>
+          <div class="title">${r.title}</div>
+          ${r.desc ? `<div class="desc">${r.desc}</div>` : ""}
+        </div>
+        <div class="period">${r.period}</div>
+      </div>
+    `;
+  }
+
+  document.getElementById("search").addEventListener("input", (e) => {
+    query = e.target.value;
+    renderContent();
+  });
+
+  document.getElementById("last-updated").textContent =
+    "Última actualización: " + LAST_UPDATED;
+
+  renderTabs();
+  renderContent();
+</script>
+
+</body>
+</html>
