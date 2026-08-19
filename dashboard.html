@@ -28,7 +28,7 @@
   table{
     border-collapse:collapse;
     width:100%;
-    max-width:1160px;
+    max-width:1320px;
     margin:0 auto;
     table-layout:fixed;
   }
@@ -37,8 +37,8 @@
     padding:0;
     font-size:14px;
   }
-  col.pillar-col{ width:120px; }
-  col.task-col{ width:210px; }
+  col.pillar-col{ width:110px; }
+  col.task-col{ width:190px; }
 
   /* ===== Encabezado principal ===== */
   .title-cell{
@@ -90,10 +90,13 @@
 
   /* ===== Columna de tarea ===== */
   .task-cell{
-    padding:10px 14px;
+    padding:10px 12px;
     color:#1E2A3E;
     font-size:14px;
     background:#fff;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
   }
   tr.alt .task-cell{ background:var(--row-alt); }
   tr.alt td.empty{ background:var(--row-alt); }
@@ -105,10 +108,12 @@
   td.bar{
     color:#fff;
     font-weight:500;
-    padding:10px 14px;
+    padding:10px 10px;
     font-size:14px;
     text-align:left;
     white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
     position:relative;
   }
   td.bar.mantenciones{ background:var(--teal); }
@@ -118,7 +123,7 @@
   td.bar.otros{ background:var(--orange); }
 
   /* ===== Columna Estado ===== */
-  col.status-col{ width:90px; }
+  col.status-col{ width:64px; }
   .status-head{
     background:var(--navy);
     color:#fff;
