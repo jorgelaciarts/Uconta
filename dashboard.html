@@ -122,7 +122,7 @@
   td.bar.riesgos{ background:var(--red); }
   td.bar.otros{ background:var(--orange); }
 
-  /* ===== Columna Estado ===== */
+  /* ===== Columna Estado (fija al hacer scroll) ===== */
   col.status-col{ width:64px; }
   .status-head{
     background:var(--navy);
@@ -131,11 +131,20 @@
     font-weight:600;
     font-size:13px;
     padding:12px 4px;
+    position:sticky;
+    right:0;
+    z-index:3;
+    box-shadow:-3px 0 6px rgba(0,0,0,0.15);
   }
   td.status{
     text-align:center;
     vertical-align:middle;
     padding:6px;
+    background:#fff;
+    position:sticky;
+    right:0;
+    z-index:2;
+    box-shadow:-3px 0 6px rgba(0,0,0,0.08);
   }
   tr.alt td.status{ background:var(--row-alt); }
 
