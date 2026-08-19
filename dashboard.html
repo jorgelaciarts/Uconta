@@ -176,9 +176,34 @@
     color:#5B6478;
   }
   .legend .check-toggle{ pointer-events:none; }
+
+  .topbar{
+    max-width:1160px;
+    margin:0 auto 12px;
+    display:flex;
+    justify-content:flex-end;
+  }
+  .nav-link{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:0.4rem 0.8rem;
+    border:1px solid #D3DAE4;
+    border-radius:6px;
+    color:var(--navy);
+    text-decoration:none;
+    font-size:13px;
+    font-family:'IBM Plex Sans', sans-serif;
+    transition:background 0.15s ease;
+  }
+  .nav-link:hover{ background:#EAF1F8; }
 </style>
 </head>
 <body>
+
+<div class="topbar">
+  <a class="nav-link" href="index.html">← Ver índice general</a>
+</div>
 
 <table>
   <colgroup>
@@ -375,6 +400,11 @@
       }
     });
   });
+
+  if (window.self !== window.top) {
+    const topbar = document.querySelector(".topbar");
+    if (topbar) topbar.style.display = "none";
+  }
 </script>
 
 </body>

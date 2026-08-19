@@ -69,6 +69,28 @@
   }
   .masthead-meta span{display:block;}
 
+  .view-toggle{
+    display:inline-flex;
+    margin-top:0.6rem;
+    border:1px solid #3C4B6E;
+    border-radius:6px;
+    overflow:hidden;
+  }
+  .view-btn{
+    background:transparent;
+    color:#B8C0D9;
+    border:none;
+    padding:0.4rem 0.9rem;
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size:0.78rem;
+    font-weight:500;
+    cursor:pointer;
+    transition:background 0.15s ease, color 0.15s ease;
+  }
+  .view-btn + .view-btn{ border-left:1px solid #3C4B6E; }
+  .view-btn:hover{ background:#213052; }
+  .view-btn.active{ background:var(--orange); color:#2A1A05; }
+
   /* ===== LAYOUT ===== */
   .layout{
     max-width:1180px;
@@ -228,6 +250,22 @@
     border-top:1px solid var(--line);
   }
 
+  .dashboard-view{
+    max-width:1180px;
+    margin:0 auto;
+    padding:1.5rem 2rem 3rem;
+    display:none;
+  }
+  .dashboard-view.active{ display:block; }
+  .layout.hidden{ display:none; }
+  .dashboard-view iframe{
+    width:100%;
+    height:900px;
+    border:1px solid var(--line);
+    border-radius:10px;
+    background:#fff;
+  }
+
   @media (max-width:760px){
     .layout{ grid-template-columns:1fr; }
     nav.tabs{
@@ -255,11 +293,15 @@
     <div class="masthead-meta">
       <span>Periodo Junio – Diciembre 2026</span>
       <span id="last-updated">Última actualización: —</span>
+      <div class="view-toggle">
+        <button class="view-btn active" data-view="indice" type="button">Índice</button>
+        <button class="view-btn" data-view="dashboard" type="button">Dashboard</button>
+      </div>
     </div>
   </div>
 </header>
 
-<div class="layout">
+<div class="layout" id="layout">
   <nav class="tabs" id="tabs"></nav>
   <main>
     <div class="toolbar">
@@ -268,6 +310,10 @@
     </div>
     <div id="content"></div>
   </main>
+</div>
+
+<div class="dashboard-view" id="dashboard-view">
+  <iframe src="" id="dashboard-frame" title="Dashboard resumen de tareas" loading="lazy"></iframe>
 </div>
 
 <footer>
@@ -380,6 +426,31 @@
 
   renderTabs();
   renderContent();
+
+  const viewButtons = document.querySelectorAll(".view-btn");
+  const layoutEl = document.getElementById("layout");
+  const dashboardViewEl = document.getElementById("dashboard-view");
+  const dashboardFrame = document.getElementById("dashboard-frame");
+  let dashboardLoaded = false;
+
+  viewButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      viewButtons.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+
+      if (btn.dataset.view === "dashboard") {
+        layoutEl.classList.add("hidden");
+        dashboardViewEl.classList.add("active");
+        if (!dashboardLoaded) {
+          dashboardFrame.src = "dashboard.html";
+          dashboardLoaded = true;
+        }
+      } else {
+        layoutEl.classList.remove("hidden");
+        dashboardViewEl.classList.remove("active");
+      }
+    });
+  });
 </script>
 
 </body>
