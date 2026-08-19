@@ -36,6 +36,7 @@
     border:2px solid var(--border);
     padding:0;
     font-size:14px;
+    vertical-align:middle;
   }
   col.pillar-col{ width:110px; }
   col.task-col{ width:190px; }
@@ -90,13 +91,13 @@
 
   /* ===== Columna de tarea ===== */
   .task-cell{
-    padding:10px 12px;
+    padding:8px 12px;
     color:#1E2A3E;
-    font-size:14px;
+    font-size:13.5px;
     background:#fff;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
+    white-space:normal;
+    line-height:1.3;
+    word-break:break-word;
   }
   tr.alt .task-cell{ background:var(--row-alt); }
   tr.alt td.empty{ background:var(--row-alt); }
@@ -108,12 +109,12 @@
   td.bar{
     color:#fff;
     font-weight:500;
-    padding:10px 10px;
-    font-size:14px;
+    padding:8px 10px;
+    font-size:13.5px;
     text-align:left;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
+    white-space:normal;
+    line-height:1.3;
+    word-break:break-word;
     position:relative;
   }
   td.bar.mantenciones{ background:var(--teal); }

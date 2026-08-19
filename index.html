@@ -196,7 +196,7 @@
 
   .record{
     display:grid;
-    grid-template-columns:90px 1fr auto;
+    grid-template-columns:90px 1fr auto auto;
     gap:1rem;
     align-items:center;
     padding:0.85rem 1rem;
@@ -226,6 +226,19 @@
     border-radius:20px;
     white-space:nowrap;
   }
+  .assignee-select{
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size:0.78rem;
+    color:var(--ink);
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:5px 8px;
+    min-width:168px;
+    cursor:pointer;
+  }
+  .assignee-select:focus{ outline:2px solid var(--ink); outline-offset:1px; }
+  .assignee-select.unassigned{ color:var(--ink-soft); }
 
   .record.mantenciones .period{ background:var(--teal-tint); color:var(--teal); }
   .record.experiencia .period{ background:var(--blue-tint); color:var(--blue); }
@@ -279,6 +292,7 @@
     .tab.active{ border-left:none; box-shadow:inset 0 -3px 0 currentColor; }
     main{ border-left:none; padding:1.5rem 1rem 3rem; }
     .record{ grid-template-columns:1fr; gap:0.4rem; }
+    .assignee-select{ width:100%; }
   }
 </style>
 </head>
@@ -330,6 +344,20 @@
     { id: "riesgos",       label: "Matriz Riesgos" },
     { id: "otros",         label: "Otros" },
   ];
+
+  const RESPONSABLES = [
+    "Todos",
+    "Julissa Lazo",
+    "Miguel Baeza",
+    "Macarena Barrera",
+    "Ximena Valdebenito",
+    "Felipe Sarabia",
+    "Jose Celedon",
+    "Genesis Lopez",
+  ];
+
+  const ASSIGNEE_KEY = "indice-responsables-v1";
+  const assignees = JSON.parse(localStorage.getItem(ASSIGNEE_KEY) || "{}");
 
   let activePillar = "todos";
   let query = "";
@@ -385,6 +413,7 @@
 
     if (activePillar !== "todos") {
       contentEl.innerHTML = records.map(recordHtml).join("");
+      bindAssigneeSelects();
       return;
     }
 
@@ -401,9 +430,32 @@
         ${groups[p.id].map(recordHtml).join("")}
       </div>
     `).join("");
+
+    bindAssigneeSelects();
+  }
+
+  function bindAssigneeSelects() {
+    document.querySelectorAll(".assignee-select").forEach(sel => {
+      sel.addEventListener("change", () => {
+        const exp = sel.dataset.exp;
+        if (sel.value) {
+          assignees[exp] = sel.value;
+          sel.classList.remove("unassigned");
+        } else {
+          delete assignees[exp];
+          sel.classList.add("unassigned");
+        }
+        localStorage.setItem(ASSIGNEE_KEY, JSON.stringify(assignees));
+      });
+    });
   }
 
   function recordHtml(r) {
+    const current = assignees[r.exp] || "";
+    const options = RESPONSABLES.map(name =>
+      `<option value="${name}" ${name === current ? "selected" : ""}>${name}</option>`
+    ).join("");
+
     return `
       <div class="record ${r.pillar}">
         <div class="exp">${r.exp}</div>
@@ -412,6 +464,10 @@
           ${r.desc ? `<div class="desc">${r.desc}</div>` : ""}
         </div>
         <div class="period">${r.period}</div>
+        <select class="assignee-select ${current ? "" : "unassigned"}" data-exp="${r.exp}">
+          <option value="" ${current ? "" : "selected"}>Sin asignar</option>
+          ${options}
+        </select>
       </div>
     `;
   }
