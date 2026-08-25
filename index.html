@@ -310,6 +310,7 @@
       <div class="view-toggle">
         <button class="view-btn active" data-view="indice" type="button">Índice</button>
         <button class="view-btn" data-view="dashboard" type="button">Dashboard</button>
+        <button class="view-btn" data-view="tricel" type="button">Tricel</button>
       </div>
     </div>
   </div>
@@ -328,6 +329,10 @@
 
 <div class="dashboard-view" id="dashboard-view">
   <iframe src="" id="dashboard-frame" title="Dashboard resumen de tareas" loading="lazy"></iframe>
+</div>
+
+<div class="dashboard-view" id="tricel-view">
+  <iframe src="" id="tricel-frame" title="Dashboard Tricel" loading="lazy"></iframe>
 </div>
 
 <footer>
@@ -487,23 +492,34 @@
   const layoutEl = document.getElementById("layout");
   const dashboardViewEl = document.getElementById("dashboard-view");
   const dashboardFrame = document.getElementById("dashboard-frame");
+  const tricelViewEl = document.getElementById("tricel-view");
+  const tricelFrame = document.getElementById("tricel-frame");
   let dashboardLoaded = false;
+  let tricelLoaded = false;
 
   viewButtons.forEach(btn => {
     btn.addEventListener("click", () => {
       viewButtons.forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
 
+      layoutEl.classList.add("hidden");
+      dashboardViewEl.classList.remove("active");
+      tricelViewEl.classList.remove("active");
+
       if (btn.dataset.view === "dashboard") {
-        layoutEl.classList.add("hidden");
         dashboardViewEl.classList.add("active");
         if (!dashboardLoaded) {
           dashboardFrame.src = "dashboard.html";
           dashboardLoaded = true;
         }
+      } else if (btn.dataset.view === "tricel") {
+        tricelViewEl.classList.add("active");
+        if (!tricelLoaded) {
+          tricelFrame.src = "https://jorgelaciarts.github.io/Tricel/";
+          tricelLoaded = true;
+        }
       } else {
         layoutEl.classList.remove("hidden");
-        dashboardViewEl.classList.remove("active");
       }
     });
   });
