@@ -25,6 +25,8 @@ const RECORDS = [
   { exp: "EXP-2026-001", pillar: "mantenciones", title: "Base de datos", period: "Junio – Agosto" },
   { exp: "EXP-2026-002", pillar: "mantenciones", title: "Formato preinforme PT", period: "Septiembre – Octubre" },
   { exp: "EXP-2026-003", pillar: "mantenciones", title: "Sistema Rendición Online", period: "Junio – Diciembre" },
+  { exp: "EXP-2026-015", pillar: "mantenciones", title: "Sistema de inhabilidades", period: "Junio – Diciembre" },
+  { exp: "EXP-2026-016", pillar: "mantenciones", title: "Sistema del control del gasto", period: "Junio – Diciembre" },
 
   // --- Experiencia Usuario ---
   { exp: "EXP-2026-004", pillar: "experiencia", title: "Manuales contabilidad", period: "Agosto – Diciembre" },
