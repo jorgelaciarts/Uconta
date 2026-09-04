@@ -223,6 +223,33 @@
   }
   .add-btn:hover{ background:#C97A1A; }
 
+  .add-row-btn{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    width:100%;
+    margin-top:10px;
+    padding:0.85rem;
+    background:#fff;
+    border:2px dashed var(--line);
+    border-radius:8px;
+    color:var(--ink-soft);
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size:0.85rem;
+    font-weight:600;
+    cursor:pointer;
+  }
+  .add-row-btn:hover{
+    border-color:var(--orange);
+    color:var(--orange);
+    background:var(--amber-tint);
+  }
+  .add-row-btn .plus{
+    font-size:1.1rem;
+    line-height:1;
+  }
+
   .manual-badge{
     display:inline-block;
     margin-left:6px;
@@ -391,6 +418,9 @@
     <tbody id="tbody"></tbody>
   </table>
   <div class="empty-msg" id="empty-msg" style="display:none;">No se encontraron causas con ese filtro.</div>
+  <button type="button" class="add-row-btn" id="open-modal-btn-bottom">
+    <span class="plus">+</span> Agregar causa
+  </button>
 </div>
 
 <footer>
@@ -685,6 +715,7 @@
   }
 
   document.getElementById("open-modal-btn").addEventListener("click", openModal);
+  document.getElementById("open-modal-btn-bottom").addEventListener("click", openModal);
   document.getElementById("cancel-modal-btn").addEventListener("click", closeModal);
   modalOverlay.addEventListener("click", (e) => {
     if (e.target === modalOverlay) closeModal();
