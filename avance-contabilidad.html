@@ -208,6 +208,125 @@
   }
   .lock-toggle:hover{ transform:scale(1.08); border-color:var(--green); }
   .lock-toggle svg{ width:13px; height:13px; opacity:0; transition:opacity 0.12s ease; }
+
+  .add-btn{
+    background:var(--orange);
+    color:#2A1A05;
+    border:none;
+    border-radius:6px;
+    padding:0.5rem 1rem;
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size:0.82rem;
+    font-weight:600;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .add-btn:hover{ background:#C97A1A; }
+
+  .manual-badge{
+    display:inline-block;
+    margin-left:6px;
+    font-size:0.62rem;
+    font-family:'IBM Plex Mono', monospace;
+    color:var(--ink-soft);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:1px 5px;
+  }
+  .delete-btn{
+    background:none;
+    border:none;
+    color:#B23A2E;
+    cursor:pointer;
+    font-size:0.85rem;
+    padding:2px 4px;
+    line-height:1;
+  }
+  .delete-btn:hover{ text-decoration:underline; }
+
+  .modal-overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(22,33,61,0.55);
+    z-index:50;
+    align-items:flex-start;
+    justify-content:center;
+    padding:3rem 1rem;
+    overflow-y:auto;
+  }
+  .modal-overlay.open{ display:flex; }
+  .modal{
+    background:var(--paper);
+    border-radius:10px;
+    border:1px solid var(--line);
+    max-width:560px;
+    width:100%;
+    padding:1.5rem;
+    box-shadow:0 10px 40px rgba(0,0,0,0.25);
+  }
+  .modal h2{
+    font-family:'Fraunces', serif;
+    font-size:1.25rem;
+    margin-bottom:1rem;
+  }
+  .field-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-bottom:10px;
+  }
+  .field{ display:flex; flex-direction:column; gap:4px; }
+  .field.full{ grid-column:1 / -1; }
+  .field label{
+    font-size:0.72rem;
+    font-weight:600;
+    color:var(--ink-soft);
+    text-transform:uppercase;
+    letter-spacing:0.03em;
+  }
+  .field input, .field select{
+    padding:0.5rem 0.6rem;
+    border:1px solid var(--line);
+    border-radius:6px;
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size:0.85rem;
+    background:#fff;
+  }
+  .modal-actions{
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+    margin-top:1.25rem;
+  }
+  .btn-secondary{
+    background:#fff;
+    border:1px solid var(--line);
+    color:var(--ink);
+    border-radius:6px;
+    padding:0.55rem 1.1rem;
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size:0.85rem;
+    cursor:pointer;
+  }
+  .btn-primary{
+    background:var(--green);
+    border:none;
+    color:#fff;
+    border-radius:6px;
+    padding:0.55rem 1.1rem;
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size:0.85rem;
+    font-weight:600;
+    cursor:pointer;
+  }
+  .form-error{
+    color:#B23A2E;
+    font-size:0.78rem;
+    margin-top:-4px;
+    margin-bottom:8px;
+    display:none;
+  }
   .lock-toggle.on{ background:var(--green); border-color:var(--green); }
   .lock-toggle.on svg{ opacity:1; }
 
@@ -250,6 +369,7 @@
     <option value="pending">Pendientes</option>
   </select>
   <span class="count" id="result-count"></span>
+  <button class="add-btn" id="open-modal-btn" type="button">+ Agregar causa</button>
 </div>
 
 <div class="table-wrap">
@@ -274,17 +394,99 @@
 </div>
 
 <footer>
-  El responsable se asignó en rotación equitativa entre las 7 personas del equipo. Al marcar "Terminado", la fila se bloquea (el responsable ya no se puede reasignar) hasta que se desmarque. El progreso se guarda automáticamente en este navegador.
+  El responsable se asignó en rotación equitativa entre las 7 personas del equipo. Al marcar "Terminado", la fila se bloquea (el responsable ya no se puede reasignar) hasta que se desmarque. El progreso y las causas agregadas manualmente se guardan automáticamente en este navegador.
 </footer>
+
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <h2>Agregar nueva causa</h2>
+    <form id="add-form">
+      <div class="field-row">
+        <div class="field">
+          <label for="f-rut">RUT</label>
+          <input type="text" id="f-rut" placeholder="12345678-9">
+        </div>
+        <div class="field">
+          <label for="f-eleccion">Elección</label>
+          <select id="f-eleccion">
+            <option value="ALCALDE">ALCALDE</option>
+            <option value="CONCEJAL">CONCEJAL</option>
+            <option value="CORE">CORE</option>
+            <option value="GORE">GORE</option>
+          </select>
+        </div>
+      </div>
+      <div class="field full">
+        <label for="f-candidato">Nombre candidato</label>
+        <input type="text" id="f-candidato" placeholder="NOMBRE APELLIDO APELLIDO" required>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="f-pronunciamiento">Pronunciamiento</label>
+          <select id="f-pronunciamiento">
+            <option value="ACOGE TOTAL">ACOGE TOTAL</option>
+            <option value="ACOGE PARCIAL">ACOGE PARCIAL</option>
+            <option value="RECHAZA">RECHAZA</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="f-causa">Causa (Rol)</label>
+          <input type="text" id="f-causa" placeholder="1234-2025">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="f-oficio">Oficio devolución</label>
+          <select id="f-oficio">
+            <option value="SI">SI</option>
+            <option value="NO">NO</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="f-estado">Estado Tricel</label>
+          <select id="f-estado">
+            <option value="EN REDACCION">EN REDACCION</option>
+            <option value="ENTREGADO">ENTREGADO</option>
+          </select>
+        </div>
+      </div>
+      <div class="field full">
+        <label for="f-responsable">Responsable</label>
+        <select id="f-responsable"></select>
+      </div>
+      <div class="form-error" id="form-error">El nombre del candidato es obligatorio.</div>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" id="cancel-modal-btn">Cancelar</button>
+        <button type="submit" class="btn-primary">Agregar causa</button>
+      </div>
+    </form>
+  </div>
+</div>
 
 <script src="avance-data.js"></script>
 <script>
   const NOMBRES = ["Julissa Lazo","Miguel Baeza","Macarena Barrera","Ximena Valdebenito","Felipe Sarabia","Jose Celedon","Genesis Lopez"];
   const LOCK_KEY = "avance-contabilidad-locks-v1";
   const RESP_KEY = "avance-contabilidad-resp-v1";
+  const MANUAL_KEY = "avance-contabilidad-manual-v1";
 
   const locks = JSON.parse(localStorage.getItem(LOCK_KEY) || "{}");
   const respOverrides = JSON.parse(localStorage.getItem(RESP_KEY) || "{}");
+  const manualRecords = JSON.parse(localStorage.getItem(MANUAL_KEY) || "[]");
+
+  function allRecords() {
+    return AVANCE_RECORDS.concat(manualRecords);
+  }
+
+  function nextIdx() {
+    const all = allRecords();
+    const max = all.reduce((m, r) => Math.max(m, Number(r.idx) || 0), 0);
+    return max + 1;
+  }
+
+  function saveManual() {
+    localStorage.setItem(MANUAL_KEY, JSON.stringify(manualRecords));
+  }
 
   let query = "";
   let filterResp = "";
@@ -305,8 +507,9 @@
   }
 
   function renderSummary() {
-    const total = AVANCE_RECORDS.length;
-    const done = AVANCE_RECORDS.filter(isDone).length;
+    const records = allRecords();
+    const total = records.length;
+    const done = records.filter(isDone).length;
     const pending = total - done;
     const pct = total ? Math.round((done / total) * 100) : 0;
 
@@ -352,7 +555,7 @@
   }
 
   function renderTable() {
-    const filtered = AVANCE_RECORDS.filter(matches);
+    const filtered = allRecords().filter(matches);
     document.getElementById("result-count").textContent =
       filtered.length === 1 ? "1 resultado" : `${filtered.length} resultados`;
 
@@ -380,7 +583,7 @@
         <tr class="${done ? "locked" : ""}" data-idx="${r.idx}">
           <td class="idx-cell">${r.idx}</td>
           <td class="rut-cell">${r.rut || ""}</td>
-          <td class="candidato-cell">${r.candidato}</td>
+          <td class="candidato-cell">${r.candidato}${r.manual ? '<span class="manual-badge">manual</span>' : ""}</td>
           <td>${r.eleccion}</td>
           <td>${r.pronunciamiento}</td>
           <td>${r.causa || ""}</td>
@@ -391,6 +594,7 @@
             <div class="lock-toggle ${done ? "on" : ""}" data-idx="${r.idx}" role="button" tabindex="0" aria-label="Marcar causa como terminada">
               ${checkIcon()}
             </div>
+            ${r.manual ? `<button type="button" class="delete-btn" data-idx="${r.idx}" title="Eliminar causa agregada manualmente">✕</button>` : ""}
           </td>
         </tr>
       `;
@@ -411,7 +615,7 @@
     document.querySelectorAll(".lock-toggle").forEach(toggle => {
       const toggleLock = () => {
         const idx = toggle.dataset.idx;
-        const record = AVANCE_RECORDS.find(r => String(r.idx) === String(idx));
+        const record = allRecords().find(r => String(r.idx) === String(idx));
         const next = !isDone(record);
         locks[idx] = next;
         localStorage.setItem(LOCK_KEY, JSON.stringify(locks));
@@ -421,6 +625,22 @@
       toggle.addEventListener("click", toggleLock);
       toggle.addEventListener("keydown", (e) => {
         if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleLock(); }
+      });
+    });
+
+    document.querySelectorAll(".delete-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const idx = btn.dataset.idx;
+        if (!confirm("¿Eliminar esta causa agregada manualmente?")) return;
+        const pos = manualRecords.findIndex(r => String(r.idx) === String(idx));
+        if (pos !== -1) manualRecords.splice(pos, 1);
+        delete locks[idx];
+        delete respOverrides[idx];
+        saveManual();
+        localStorage.setItem(LOCK_KEY, JSON.stringify(locks));
+        localStorage.setItem(RESP_KEY, JSON.stringify(respOverrides));
+        renderSummary();
+        renderTable();
       });
     });
   }
@@ -445,6 +665,62 @@
   populateFilterResp();
   renderSummary();
   renderTable();
+
+  // ===== Modal: agregar nueva causa =====
+  const modalOverlay = document.getElementById("modal-overlay");
+  const addForm = document.getElementById("add-form");
+  const formError = document.getElementById("form-error");
+  const respSelect = document.getElementById("f-responsable");
+
+  respSelect.innerHTML = NOMBRES.map(n => `<option value="${n}">${n}</option>`).join("");
+
+  function openModal() {
+    addForm.reset();
+    formError.style.display = "none";
+    modalOverlay.classList.add("open");
+    document.getElementById("f-candidato").focus();
+  }
+  function closeModal() {
+    modalOverlay.classList.remove("open");
+  }
+
+  document.getElementById("open-modal-btn").addEventListener("click", openModal);
+  document.getElementById("cancel-modal-btn").addEventListener("click", closeModal);
+  modalOverlay.addEventListener("click", (e) => {
+    if (e.target === modalOverlay) closeModal();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && modalOverlay.classList.contains("open")) closeModal();
+  });
+
+  addForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const candidato = document.getElementById("f-candidato").value.trim();
+    if (!candidato) {
+      formError.style.display = "block";
+      return;
+    }
+    formError.style.display = "none";
+
+    const record = {
+      idx: nextIdx(),
+      rut: document.getElementById("f-rut").value.trim(),
+      candidato: candidato.toUpperCase(),
+      eleccion: document.getElementById("f-eleccion").value,
+      pronunciamiento: document.getElementById("f-pronunciamiento").value,
+      causa: document.getElementById("f-causa").value.trim(),
+      oficio: document.getElementById("f-oficio").value,
+      responsable: document.getElementById("f-responsable").value,
+      estado: document.getElementById("f-estado").value,
+      manual: true,
+    };
+
+    manualRecords.push(record);
+    saveManual();
+    closeModal();
+    renderSummary();
+    renderTable();
+  });
 </script>
 
 </body>
