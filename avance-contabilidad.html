@@ -193,7 +193,47 @@
     -webkit-text-fill-color:var(--ink);
   }
 
-  .lock-cell{ text-align:center; }
+  .lock-cell{
+    text-align:center;
+    width:96px;
+    min-width:96px;
+    position:sticky;
+    right:220px;
+    background:#fff;
+    z-index:2;
+    box-shadow:-3px 0 6px rgba(0,0,0,0.06);
+  }
+  tr:nth-child(even) .lock-cell{ background:#FAF8F2; }
+  tr.locked .lock-cell{ background:var(--green-tint); }
+
+  .lock-th{
+    width:96px;
+    min-width:96px;
+    position:sticky;
+    right:220px;
+    z-index:3;
+    box-shadow:-3px 0 6px rgba(0,0,0,0.15);
+  }
+
+  .comment-th{
+    width:220px;
+    min-width:220px;
+    position:sticky;
+    right:0;
+    z-index:3;
+    box-shadow:-3px 0 6px rgba(0,0,0,0.15);
+  }
+  .comment-cell{
+    width:220px;
+    min-width:220px;
+    position:sticky;
+    right:0;
+    background:#fff;
+    z-index:2;
+    box-shadow:-3px 0 6px rgba(0,0,0,0.06);
+  }
+  tr:nth-child(even) .comment-cell{ background:#FAF8F2; }
+  tr.locked .comment-cell{ background:var(--green-tint); }
 
   .comment-input{
     width:100%;
@@ -424,8 +464,8 @@
         <th class="center">Oficio</th>
         <th>Responsable</th>
         <th>Estado Tricel</th>
-        <th class="center">Terminado</th>
-        <th>Comentario</th>
+        <th class="center lock-th">Terminado</th>
+        <th class="comment-th">Comentario</th>
       </tr>
     </thead>
     <tbody id="tbody"></tbody>
@@ -641,7 +681,7 @@
             </div>
             ${r.manual ? `<button type="button" class="delete-btn" data-idx="${r.idx}" title="Eliminar causa agregada manualmente">✕</button>` : ""}
           </td>
-          <td><input type="text" class="comment-input" data-idx="${r.idx}" placeholder="Comentario…" value="${(comments[r.idx] || "").replace(/"/g, "&quot;")}"></td>
+          <td class="comment-cell"><input type="text" class="comment-input" data-idx="${r.idx}" placeholder="Comentario…" value="${(comments[r.idx] || "").replace(/"/g, "&quot;")}"></td>
         </tr>
       `;
     }).join("");
