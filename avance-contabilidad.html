@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Avance Unidad Contabilidad</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F5F1E8;
+    --paper-2:#EFEADC;
+    --ink:#16213D;
+    --ink-soft:#5B6478;
+    --line:#DAD3C1;
+    --navy:#182B4D;
+    --green:#2E9E52;
+    --green-tint:#E4F3E9;
+    --amber:#C97A1A;
+    --amber-tint:#F6EADA;
+    --orange:#E08A1B;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Sans', sans-serif;
+    line-height:1.4;
+  }
+
+  header{
+    background:var(--navy);
+    color:#fff;
+    padding:1.5rem 1.5rem 1.25rem;
+    border-bottom:5px solid var(--orange);
+  }
+  header .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.72rem;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:#B8C0D9;
+    margin-bottom:0.35rem;
+  }
+  header h1{
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size:1.6rem;
+  }
+  header .sub{
+    color:#B8C0D9;
+    font-size:0.85rem;
+    margin-top:0.25rem;
+  }
+
+  .summary{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    padding:1rem 1.5rem;
+    background:var(--paper-2);
+    border-bottom:1px solid var(--line);
+  }
+  .stat{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:0.6rem 1rem;
+    min-width:130px;
+  }
+  .stat .n{
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size:1.4rem;
+    line-height:1;
+  }
+  .stat .l{
+    font-size:0.7rem;
+    color:var(--ink-soft);
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+    margin-top:2px;
+  }
+  .stat.done .n{ color:var(--green); }
+  .stat.pending .n{ color:var(--amber); }
+
+  .progress-bar{
+    height:8px;
+    background:#E3DCC9;
+    border-radius:4px;
+    overflow:hidden;
+    margin-top:2px;
+  }
+  .progress-bar .fill{
+    height:100%;
+    background:var(--green);
+    transition:width 0.2s ease;
+  }
+
+  .toolbar{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    padding:0.85rem 1.5rem;
+    flex-wrap:wrap;
+    border-bottom:1px solid var(--line);
+  }
+  .toolbar input[type="text"]{
+    flex:1;
+    min-width:200px;
+    padding:0.5rem 0.8rem;
+    border:1px solid var(--line);
+    border-radius:6px;
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size:0.85rem;
+  }
+  .toolbar select{
+    padding:0.5rem 0.7rem;
+    border:1px solid var(--line);
+    border-radius:6px;
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size:0.83rem;
+    background:#fff;
+  }
+  .toolbar .count{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.72rem;
+    color:var(--ink-soft);
+    white-space:nowrap;
+  }
+
+  .table-wrap{
+    overflow-x:auto;
+    padding:0 1.5rem 2rem;
+  }
+  table{
+    border-collapse:collapse;
+    width:100%;
+    min-width:1080px;
+    background:#fff;
+  }
+  thead th{
+    position:sticky;
+    top:0;
+    background:var(--navy);
+    color:#fff;
+    text-align:left;
+    font-size:0.72rem;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+    padding:10px 10px;
+    font-weight:600;
+    z-index:2;
+  }
+  thead th.center{ text-align:center; }
+  tbody td{
+    padding:8px 10px;
+    font-size:0.82rem;
+    border-bottom:1px solid var(--line);
+    vertical-align:middle;
+  }
+  tbody tr:nth-child(even){ background:#FAF8F2; }
+  tbody tr.locked{ background:var(--green-tint) !important; }
+
+  .idx-cell{ font-family:'IBM Plex Mono', monospace; color:var(--ink-soft); font-size:0.75rem; }
+  .rut-cell{ font-family:'IBM Plex Mono', monospace; font-size:0.78rem; white-space:nowrap; }
+  .candidato-cell{ font-weight:500; }
+
+  .badge{
+    display:inline-block;
+    padding:3px 9px;
+    border-radius:20px;
+    font-size:0.7rem;
+    font-weight:500;
+    white-space:nowrap;
+  }
+  .badge.entregado{ background:var(--green-tint); color:var(--green); }
+  .badge.redaccion{ background:var(--amber-tint); color:var(--amber); }
+
+  .resp-select{
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size:0.78rem;
+    padding:4px 6px;
+    border:1px solid var(--line);
+    border-radius:5px;
+    background:#fff;
+    min-width:150px;
+  }
+  .resp-select:disabled{
+    background:var(--green-tint);
+    color:var(--ink);
+    border-color:var(--green);
+    opacity:1;
+    -webkit-text-fill-color:var(--ink);
+  }
+
+  .lock-cell{ text-align:center; }
+  .lock-toggle{
+    width:24px;
+    height:24px;
+    border-radius:50%;
+    border:2px solid #B9C3D2;
+    background:#fff;
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    transition:background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+  }
+  .lock-toggle:hover{ transform:scale(1.08); border-color:var(--green); }
+  .lock-toggle svg{ width:13px; height:13px; opacity:0; transition:opacity 0.12s ease; }
+  .lock-toggle.on{ background:var(--green); border-color:var(--green); }
+  .lock-toggle.on svg{ opacity:1; }
+
+  .empty-msg{
+    padding:2.5rem;
+    text-align:center;
+    color:var(--ink-soft);
+    font-size:0.85rem;
+  }
+
+  footer{
+    padding:1rem 1.5rem 2rem;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.7rem;
+    color:var(--ink-soft);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Índice general · avance por causa</div>
+  <h1>Avance Unidad Contabilidad</h1>
+  <div class="sub">Base importada desde Excel — Tribunal Calificador de Elecciones · 278 causas</div>
+</header>
+
+<div class="summary" id="summary"></div>
+
+<div class="toolbar">
+  <input type="text" id="search" placeholder="Buscar por nombre, RUT o rol de causa…">
+  <select id="filter-resp"></select>
+  <select id="filter-estado">
+    <option value="">Todos los estados</option>
+    <option value="ENTREGADO">Entregado</option>
+    <option value="EN REDACCION">En redacción</option>
+  </select>
+  <select id="filter-lock">
+    <option value="">Todos</option>
+    <option value="done">Terminados</option>
+    <option value="pending">Pendientes</option>
+  </select>
+  <span class="count" id="result-count"></span>
+</div>
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>RUT</th>
+        <th>Candidato</th>
+        <th>Elección</th>
+        <th>Pronunciamiento</th>
+        <th>Causa (Rol)</th>
+        <th class="center">Oficio</th>
+        <th>Responsable</th>
+        <th>Estado Tricel</th>
+        <th class="center">Terminado</th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+  <div class="empty-msg" id="empty-msg" style="display:none;">No se encontraron causas con ese filtro.</div>
+</div>
+
+<footer>
+  El responsable se asignó en rotación equitativa entre las 7 personas del equipo. Al marcar "Terminado", la fila se bloquea (el responsable ya no se puede reasignar) hasta que se desmarque. El progreso se guarda automáticamente en este navegador.
+</footer>
+
+<script src="avance-data.js"></script>
+<script>
+  const NOMBRES = ["Julissa Lazo","Miguel Baeza","Macarena Barrera","Ximena Valdebenito","Felipe Sarabia","Jose Celedon","Genesis Lopez"];
+  const LOCK_KEY = "avance-contabilidad-locks-v1";
+  const RESP_KEY = "avance-contabilidad-resp-v1";
+
+  const locks = JSON.parse(localStorage.getItem(LOCK_KEY) || "{}");
+  const respOverrides = JSON.parse(localStorage.getItem(RESP_KEY) || "{}");
+
+  let query = "";
+  let filterResp = "";
+  let filterEstado = "";
+  let filterLock = "";
+
+  function checkIcon() {
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 13 10 18 19 7"></polyline></svg>`;
+  }
+
+  function currentResponsable(r) {
+    return respOverrides[r.idx] || r.responsable;
+  }
+
+  function isDone(r) {
+    if (Object.prototype.hasOwnProperty.call(locks, r.idx)) return locks[r.idx];
+    return r.estado.toUpperCase().startsWith("ENTREGADO");
+  }
+
+  function renderSummary() {
+    const total = AVANCE_RECORDS.length;
+    const done = AVANCE_RECORDS.filter(isDone).length;
+    const pending = total - done;
+    const pct = total ? Math.round((done / total) * 100) : 0;
+
+    document.getElementById("summary").innerHTML = `
+      <div class="stat">
+        <div class="n">${total}</div>
+        <div class="l">Total causas</div>
+      </div>
+      <div class="stat done">
+        <div class="n">${done}</div>
+        <div class="l">Terminadas</div>
+      </div>
+      <div class="stat pending">
+        <div class="n">${pending}</div>
+        <div class="l">Pendientes</div>
+      </div>
+      <div class="stat" style="min-width:220px;">
+        <div class="n">${pct}%</div>
+        <div class="l">Avance</div>
+        <div class="progress-bar"><div class="fill" style="width:${pct}%"></div></div>
+      </div>
+    `;
+  }
+
+  function populateFilterResp() {
+    const sel = document.getElementById("filter-resp");
+    sel.innerHTML = `<option value="">Todos los responsables</option>` +
+      NOMBRES.map(n => `<option value="${n}">${n}</option>`).join("");
+  }
+
+  function matches(r) {
+    const q = query.trim().toLowerCase();
+    const matchesQuery = !q ||
+      r.candidato.toLowerCase().includes(q) ||
+      (r.rut || "").toLowerCase().includes(q) ||
+      (r.causa || "").toLowerCase().includes(q);
+    const matchesResp = !filterResp || currentResponsable(r) === filterResp;
+    const matchesEstado = !filterEstado || r.estado.toUpperCase().startsWith(filterEstado);
+    const matchesLock = !filterLock ||
+      (filterLock === "done" && isDone(r)) ||
+      (filterLock === "pending" && !isDone(r));
+    return matchesQuery && matchesResp && matchesEstado && matchesLock;
+  }
+
+  function renderTable() {
+    const filtered = AVANCE_RECORDS.filter(matches);
+    document.getElementById("result-count").textContent =
+      filtered.length === 1 ? "1 resultado" : `${filtered.length} resultados`;
+
+    const tbody = document.getElementById("tbody");
+    const emptyMsg = document.getElementById("empty-msg");
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = "";
+      emptyMsg.style.display = "block";
+      return;
+    }
+    emptyMsg.style.display = "none";
+
+    tbody.innerHTML = filtered.map(r => {
+      const done = isDone(r);
+      const resp = currentResponsable(r);
+      const estadoClass = r.estado.toUpperCase().startsWith("ENTREGADO") ? "entregado" : "redaccion";
+      const estadoLabel = r.estado.toUpperCase().startsWith("ENTREGADO") ? "Entregado" : "En redacción";
+
+      const options = NOMBRES.map(n =>
+        `<option value="${n}" ${n === resp ? "selected" : ""}>${n}</option>`
+      ).join("");
+
+      return `
+        <tr class="${done ? "locked" : ""}" data-idx="${r.idx}">
+          <td class="idx-cell">${r.idx}</td>
+          <td class="rut-cell">${r.rut || ""}</td>
+          <td class="candidato-cell">${r.candidato}</td>
+          <td>${r.eleccion}</td>
+          <td>${r.pronunciamiento}</td>
+          <td>${r.causa || ""}</td>
+          <td class="center">${r.oficio || ""}</td>
+          <td><select class="resp-select" data-idx="${r.idx}" ${done ? "disabled" : ""}>${options}</select></td>
+          <td><span class="badge ${estadoClass}">${estadoLabel}</span></td>
+          <td class="lock-cell">
+            <div class="lock-toggle ${done ? "on" : ""}" data-idx="${r.idx}" role="button" tabindex="0" aria-label="Marcar causa como terminada">
+              ${checkIcon()}
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join("");
+
+    bindRowEvents();
+  }
+
+  function bindRowEvents() {
+    document.querySelectorAll(".resp-select").forEach(sel => {
+      sel.addEventListener("change", () => {
+        const idx = sel.dataset.idx;
+        respOverrides[idx] = sel.value;
+        localStorage.setItem(RESP_KEY, JSON.stringify(respOverrides));
+      });
+    });
+
+    document.querySelectorAll(".lock-toggle").forEach(toggle => {
+      const toggleLock = () => {
+        const idx = toggle.dataset.idx;
+        const record = AVANCE_RECORDS.find(r => String(r.idx) === String(idx));
+        const next = !isDone(record);
+        locks[idx] = next;
+        localStorage.setItem(LOCK_KEY, JSON.stringify(locks));
+        renderSummary();
+        renderTable();
+      };
+      toggle.addEventListener("click", toggleLock);
+      toggle.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleLock(); }
+      });
+    });
+  }
+
+  document.getElementById("search").addEventListener("input", (e) => {
+    query = e.target.value;
+    renderTable();
+  });
+  document.getElementById("filter-resp").addEventListener("change", (e) => {
+    filterResp = e.target.value;
+    renderTable();
+  });
+  document.getElementById("filter-estado").addEventListener("change", (e) => {
+    filterEstado = e.target.value;
+    renderTable();
+  });
+  document.getElementById("filter-lock").addEventListener("change", (e) => {
+    filterLock = e.target.value;
+    renderTable();
+  });
+
+  populateFilterResp();
+  renderSummary();
+  renderTable();
+</script>
+
+</body>
+</html>

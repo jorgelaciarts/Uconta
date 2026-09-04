@@ -310,6 +310,7 @@
       <div class="view-toggle">
         <button class="view-btn active" data-view="indice" type="button">Índice</button>
         <button class="view-btn" data-view="dashboard" type="button">Dashboard</button>
+        <button class="view-btn" data-view="avance" type="button">Avance Contabilidad</button>
         <button class="view-btn" data-view="tricel" type="button">Tricel</button>
       </div>
     </div>
@@ -329,6 +330,10 @@
 
 <div class="dashboard-view" id="dashboard-view">
   <iframe src="" id="dashboard-frame" title="Dashboard resumen de tareas" loading="lazy"></iframe>
+</div>
+
+<div class="dashboard-view" id="avance-view">
+  <iframe src="" id="avance-frame" title="Avance Unidad Contabilidad" loading="lazy"></iframe>
 </div>
 
 <div class="dashboard-view" id="tricel-view">
@@ -492,9 +497,12 @@
   const layoutEl = document.getElementById("layout");
   const dashboardViewEl = document.getElementById("dashboard-view");
   const dashboardFrame = document.getElementById("dashboard-frame");
+  const avanceViewEl = document.getElementById("avance-view");
+  const avanceFrame = document.getElementById("avance-frame");
   const tricelViewEl = document.getElementById("tricel-view");
   const tricelFrame = document.getElementById("tricel-frame");
   let dashboardLoaded = false;
+  let avanceLoaded = false;
   let tricelLoaded = false;
 
   viewButtons.forEach(btn => {
@@ -504,6 +512,7 @@
 
       layoutEl.classList.add("hidden");
       dashboardViewEl.classList.remove("active");
+      avanceViewEl.classList.remove("active");
       tricelViewEl.classList.remove("active");
 
       if (btn.dataset.view === "dashboard") {
@@ -511,6 +520,12 @@
         if (!dashboardLoaded) {
           dashboardFrame.src = "dashboard.html";
           dashboardLoaded = true;
+        }
+      } else if (btn.dataset.view === "avance") {
+        avanceViewEl.classList.add("active");
+        if (!avanceLoaded) {
+          avanceFrame.src = "avance-contabilidad.html";
+          avanceLoaded = true;
         }
       } else if (btn.dataset.view === "tricel") {
         tricelViewEl.classList.add("active");
