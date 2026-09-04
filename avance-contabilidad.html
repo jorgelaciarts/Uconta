@@ -135,7 +135,7 @@
   table{
     border-collapse:collapse;
     width:100%;
-    min-width:1080px;
+    min-width:1230px;
     background:#fff;
   }
   thead th{
@@ -194,6 +194,18 @@
   }
 
   .lock-cell{ text-align:center; }
+
+  .comment-input{
+    width:100%;
+    min-width:150px;
+    padding:5px 8px;
+    border:1px solid var(--line);
+    border-radius:5px;
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size:0.78rem;
+    background:#fff;
+  }
+  .comment-input:focus{ outline:2px solid var(--navy); outline-offset:1px; }
   .lock-toggle{
     width:24px;
     height:24px;
@@ -413,6 +425,7 @@
         <th>Responsable</th>
         <th>Estado Tricel</th>
         <th class="center">Terminado</th>
+        <th>Comentario</th>
       </tr>
     </thead>
     <tbody id="tbody"></tbody>
@@ -499,10 +512,12 @@
   const LOCK_KEY = "avance-contabilidad-locks-v1";
   const RESP_KEY = "avance-contabilidad-resp-v1";
   const MANUAL_KEY = "avance-contabilidad-manual-v1";
+  const COMMENT_KEY = "avance-contabilidad-comments-v1";
 
   const locks = JSON.parse(localStorage.getItem(LOCK_KEY) || "{}");
   const respOverrides = JSON.parse(localStorage.getItem(RESP_KEY) || "{}");
   const manualRecords = JSON.parse(localStorage.getItem(MANUAL_KEY) || "[]");
+  const comments = JSON.parse(localStorage.getItem(COMMENT_KEY) || "{}");
 
   function allRecords() {
     return AVANCE_RECORDS.concat(manualRecords);
@@ -626,6 +641,7 @@
             </div>
             ${r.manual ? `<button type="button" class="delete-btn" data-idx="${r.idx}" title="Eliminar causa agregada manualmente">✕</button>` : ""}
           </td>
+          <td><input type="text" class="comment-input" data-idx="${r.idx}" placeholder="Comentario…" value="${(comments[r.idx] || "").replace(/"/g, "&quot;")}"></td>
         </tr>
       `;
     }).join("");
@@ -666,11 +682,25 @@
         if (pos !== -1) manualRecords.splice(pos, 1);
         delete locks[idx];
         delete respOverrides[idx];
+        delete comments[idx];
         saveManual();
         localStorage.setItem(LOCK_KEY, JSON.stringify(locks));
         localStorage.setItem(RESP_KEY, JSON.stringify(respOverrides));
+        localStorage.setItem(COMMENT_KEY, JSON.stringify(comments));
         renderSummary();
         renderTable();
+      });
+    });
+
+    document.querySelectorAll(".comment-input").forEach(input => {
+      input.addEventListener("change", () => {
+        const idx = input.dataset.idx;
+        if (input.value.trim()) {
+          comments[idx] = input.value;
+        } else {
+          delete comments[idx];
+        }
+        localStorage.setItem(COMMENT_KEY, JSON.stringify(comments));
       });
     });
   }
